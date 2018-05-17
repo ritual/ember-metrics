@@ -1,4 +1,7 @@
-import { moduleFor, test } from 'ember-qunit';
+import {
+  moduleFor,
+  test
+} from 'ember-qunit';
 import sinon from 'sinon';
 
 let sandbox, config;
@@ -16,7 +19,9 @@ moduleFor('ember-metrics@metrics-adapter:segment', 'segment adapter', {
 });
 
 test('#identify calls analytics with the right arguments', function(assert) {
-  const adapter = this.subject({ config });
+  const adapter = this.subject({
+    config
+  });
   const stub = sandbox.stub(window.analytics, 'identify').callsFake(() => {
     return true;
   });
@@ -27,7 +32,9 @@ test('#identify calls analytics with the right arguments', function(assert) {
 });
 
 test('#trackEvent returns the correct response shape', function(assert) {
-  const adapter = this.subject({ config });
+  const adapter = this.subject({
+    config
+  });
   const stub = sandbox.stub(window.analytics, 'track');
   adapter.trackEvent({
     event: 'Signed Up',
@@ -47,7 +54,9 @@ test('#trackEvent returns the correct response shape', function(assert) {
 });
 
 test('#trackPage returns the correct response shape', function(assert) {
-  const adapter = this.subject({ config });
+  const adapter = this.subject({
+    config
+  });
   const stub = sandbox.stub(window.analytics, 'page');
   adapter.trackPage({
     page: '/my-overridden-page?id=1',
@@ -61,7 +70,9 @@ test('#trackPage returns the correct response shape', function(assert) {
 });
 
 test('#trackPage returns the correct response shape', function(assert) {
-  const adapter = this.subject({ config });
+  const adapter = this.subject({
+    config
+  });
   const stub = sandbox.stub(window.analytics, 'page');
   adapter.trackPage();
 
@@ -69,9 +80,24 @@ test('#trackPage returns the correct response shape', function(assert) {
 });
 
 test('#alias returns the correct response shape', function(assert) {
-  const adapter = this.subject({ config });
+  const adapter = this.subject({
+    config
+  });
   const stub = sandbox.stub(window.analytics, 'alias');
-  adapter.alias({ alias: 'foo', original: 'bar' });
+  adapter.alias({
+    alias: 'foo',
+    original: 'bar'
+  });
 
   assert.ok(stub.calledWith('foo', 'bar'), 'page called with default arguments');
+});
+
+test('#reset returns the correct response shape', function(assert) {
+  const adapter = this.subject({
+    config
+  });
+  const stub = sandbox.stub(window.analytics, 'reset');
+  adapter.reset();
+
+  assert.ok(stub.calledWith(), 'reset called with no arguments');
 });

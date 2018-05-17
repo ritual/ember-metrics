@@ -1,9 +1,17 @@
 import $ from 'jquery';
-import { assert } from '@ember/debug';
-import { copy } from '@ember/object/internals';
-import { get } from '@ember/object';
+import {
+  assert
+} from '@ember/debug';
+import {
+  copy
+} from '@ember/object/internals';
+import {
+  get
+} from '@ember/object';
 import canUseDOM from '../utils/can-use-dom';
-import { compact } from '../utils/object-transforms';
+import {
+  compact
+} from '../utils/object-transforms';
 import BaseAdapter from './base';
 
 export default BaseAdapter.extend({
@@ -19,54 +27,96 @@ export default BaseAdapter.extend({
 
     if (canUseDOM) {
       /* eslint-disable */
-      window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9";
-      /* eslint-enable */
-      window.analytics.load(segmentKey);
+      window.analytics = window.analytics || [];
+      if (!analytics.initialize)
+        if (analytics.invoked) window.console && console.error && console.error("Segment snippet included twice.");
+        else {
+          analytics.invoked = !0;
+          analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on"];
+          analytics.factory = function(t) {
+            return function() {
+              var e = Array.prototype.slice.call(arguments);
+              e.unshift(t);
+              analytics.push(e);
+              return analytics
+            }
+          };
+          for (var t = 0; t < analytics.methods.length; t++) {
+            var e = analytics.methods[t];
+            analytics[e] = analytics.factory(e)
+          }
+          analytics.load = function(t) {
+            var e = document.createElement("script");
+            e.type = "text/javascript";
+            e.async = !0;
+            e.src = ("https:" === document.location.protocol ? "https://" : "http://") + "cdn.segment.com/analytics.js/v1/" + t + "/analytics.min.js";
+            var n = document.getElementsByTagName("script")[0];
+            n.parentNode.insertBefore(e, n)
+          };
+          analytics.SNIPPET_VERSION = "4.0.0";
+          /* eslint-enable */
+          window.analytics.load(segmentKey);
+        }
     }
   },
 
   alias(options = {}) {
     const compactedOptions = compact(options);
-    const { alias, original } = compactedOptions;
+    const {
+      alias,
+      original
+    } = compactedOptions;
 
     if (original && canUseDOM) {
       window.analytics.alias(alias, original);
-    } else if (canUseDOM){
+    } else if (canUseDOM) {
       window.analytics.alias(alias);
     }
   },
 
   identify(options = {}) {
     const compactedOptions = compact(options);
-    const { distinctId } = compactedOptions;
+    const {
+      distinctId
+    } = compactedOptions;
     delete compactedOptions.distinctId;
-    if(canUseDOM) {
+    if (canUseDOM) {
       window.analytics.identify(distinctId, compactedOptions);
     }
   },
 
   trackEvent(options = {}) {
     const compactedOptions = compact(options);
-    const { event } = compactedOptions;
+    const {
+      event
+    } = compactedOptions;
     delete compactedOptions.event;
 
-    if(canUseDOM) {
+    if (canUseDOM) {
       window.analytics.track(event, compactedOptions);
     }
   },
 
   trackPage(options = {}) {
     const compactedOptions = compact(options);
-    const { page } = compactedOptions;
+    const {
+      page
+    } = compactedOptions;
     delete compactedOptions.page;
 
-    if(canUseDOM) {
+    if (canUseDOM) {
       window.analytics.page(page, compactedOptions);
     }
   },
 
+  reset() {
+    if (canUseDOM) {
+      window.analytics.reset();
+    }
+  },
+
   willDestroy() {
-    if(canUseDOM) {
+    if (canUseDOM) {
       $('script[src*="segment.com"]').remove();
       delete window.analytics;
     }
